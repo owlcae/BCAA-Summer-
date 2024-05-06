@@ -10,20 +10,20 @@ const RecipePage = () => {
   const [isNewRecipe, setIsNewRecipe] = useState(false); // Флаг нового рецепта
 
   useEffect(() => {
-    if (isNewRecipe) {
-      // Запрос на получение нового рецепта
-      axios.get('http://localhost:8000/recipes/create')
-        .then(response => {
-          setRecipe(response.data);
-          setError('');
-        })
-        .catch(error => {
-          console.error('Error fetching new recipe:', error);
-          setError('Failed to fetch new recipe');
-        });
-    } else {
+    // if (isNewRecipe) {
+    //   // Запрос на получение нового рецепта
+    //   axios.get('http://localhost:8000/recipes/create')
+    //     .then(response => {
+    //       setRecipe(response.data);
+    //       setError('');
+    //     })
+    //     .catch(error => {
+    //       console.error('Error fetching new recipe:', error);
+    //       setError('Failed to fetch new recipe');
+    //     });
+    // } else {
       // Запрос на получение существующего рецепта
-      axios.get(`http://localhost:8000/recipes/?recipeTitle=${recipeTitle}`)
+      axios.get(`http://localhost:8000/recipes/${recipeTitle}`)
         .then(response => {
           setRecipe(response.data);
           setError('');
@@ -32,7 +32,6 @@ const RecipePage = () => {
           console.error('Error fetching recipe data:', error);
           setError('Failed to fetch recipe');
         });
-    }
   }, [isNewRecipe, recipeTitle]);
 
   // Если произошла ошибка при загрузке рецепта

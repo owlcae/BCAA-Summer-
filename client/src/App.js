@@ -30,7 +30,7 @@ function App() {
         <Route path="/ingredients" element={<IngredientsComponent />} />
         <Route path="/register" element={<RegisterComponent />} />
         <Route path="/signin" element={<LoginComponent />} />
-        <Route path="/recipes/:recipeTitle" element={<RecipePage />} />
+        <Route path="/recipe/:recipeTitle" element={<RecipePage />} />
       </Routes>
     </Router>
   );

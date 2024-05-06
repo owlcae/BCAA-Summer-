@@ -38,7 +38,7 @@ async function GetRecipeAblByTitle(req, res) {
   // }
 
   try {
-    const title = req.params.recipeTitle.replace(/-/g, " ");
+    const title = req.params.recipeTitle.replace(/-/g, " ").replace("%20", "-");
     const recipe = await recipeDao.findByTitle(title);
     if (recipe) {
         res.json(recipe);
