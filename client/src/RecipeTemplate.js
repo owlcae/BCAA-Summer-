@@ -7,22 +7,9 @@ const RecipePage = () => {
   const { recipeTitle } = useParams();
   const [recipe, setRecipe] = useState(null);
   const [error, setError] = useState('');
-  const [isNewRecipe, setIsNewRecipe] = useState(false); // Флаг нового рецепта
+  const [isNewRecipe, setIsNewRecipe] = useState(false);
 
   useEffect(() => {
-    // if (isNewRecipe) {
-    //   // Запрос на получение нового рецепта
-    //   axios.get('http://localhost:8000/recipes/create')
-    //     .then(response => {
-    //       setRecipe(response.data);
-    //       setError('');
-    //     })
-    //     .catch(error => {
-    //       console.error('Error fetching new recipe:', error);
-    //       setError('Failed to fetch new recipe');
-    //     });
-    // } else {
-      // Запрос на получение существующего рецепта
       axios.get(`http://localhost:8000/recipes/${recipeTitle}`)
         .then(response => {
           setRecipe(response.data);
@@ -34,17 +21,14 @@ const RecipePage = () => {
         });
   }, [isNewRecipe, recipeTitle]);
 
-  // Если произошла ошибка при загрузке рецепта
   if (error) {
     return <p>Error: {error}</p>;
   }
 
-  // Если рецепт ещё не загружен
   if (!recipe) {
     return <p>Loading...</p>;
   }
 
-  // Отображение рецепта с помощью стилей
   return (
     <RecipeWrapper>
       <RecipeImage src={recipe.image} alt={recipe.title} />
@@ -74,11 +58,11 @@ export const RecipeWrapper = styled.section`
 `;
 
 export const RecipeImage = styled.img`
-  width: 300px; /* Задаем фиксированную ширину */
-  height: 300px; /* Задаем фиксированную высоту */
-  object-fit: cover; /* Обеспечивает заполнение всей области, сохраняя при этом пропорции */
-  object-position: center; /* Центрируем изображение */
-  border-radius: 0; /* Убираем скругление, чтобы изображение было квадратным */
+  width: 300px; 
+  height: 300px;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 0;
   margin-bottom: 20px;
 `;
 
@@ -114,7 +98,7 @@ export const Instructions = styled.p`
   font-family: 'Montserrat', sans-serif;
   font-size: 18px;
   margin-top: 20px;
-  text-align: center; /* Center-align the text */
+  text-align: center;
 `;
 
 export const LoadingWrapper = styled.div`
@@ -122,12 +106,5 @@ export const LoadingWrapper = styled.div`
   font-size: 18px;
   margin-top: 20px;
 `;
-
-// const ErrorWrapper = styled.div`
-//   font-family: 'Montserrat', sans-serif;
-//   font-size: 18px;
-//   margin-top: 20px;
-//   color: red;
-// `;
 
 export default RecipePage;

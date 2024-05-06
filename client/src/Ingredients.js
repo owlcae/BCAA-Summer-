@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import styled, { createGlobalStyle } from 'styled-components';
 import * as recipeStyle from './Recipes';
-import * as infredientStyle from './RecipeTemplate'
+import * as infredientStyle from './RecipeTemplate';
 
 const GlobalStyle = createGlobalStyle`
   body, html {
@@ -26,21 +26,18 @@ function IngredientsComponent() {
       try {
         const request = await fetch('http://localhost:8000/ingredients/list');
         const ingredientsData = await request.json();
-        // Добавляем свойство "selected" для отслеживания выбранных ингредиентов
         const ingredientsWithSelection = ingredientsData.map(ingredient => ({
           ...ingredient,
           selected: false
         }));
         setIngredients(ingredientsWithSelection);
-        console.log("Ingredients data fetch: " + JSON.stringify(ingredientsWithSelection));
       } catch (error) {
         console.error('Error fetching ingredients:', error);
       }
     }
     fetchIngredients();
-  }, []); // вызываем один раз при монтировании
+  }, []); 
 
-  // Обработчик изменения состояния выбора ингредиента
   const handleIngredientSelect = id => {
     setIngredients(prevIngredients =>
       prevIngredients.map(ingredient =>
@@ -67,8 +64,6 @@ function IngredientsComponent() {
     setLoading(false);
   };
 
-
-  // Группировка ингредиентов по их группам
   const groupedIngredients = ingredients.reduce((acc, ingredient) => {
     if (!acc[ingredient.group]) {
       acc[ingredient.group] = [];
@@ -141,7 +136,6 @@ function IngredientsComponent() {
   );
 }
 
-// Styled Components
 const PageWrapper = styled.div`
   background-color: #fff;
   color: #000;
@@ -266,19 +260,19 @@ const SearchButton = styled.button`
 const RecipeIngredients = styled.ul`
   list-style-type: none;
   padding: 0;
-  margin-bottom: 20px; /* Добавляем нижний отступ для разделения от следующего элемента */
+  margin-bottom: 20px;
 `;
 
 const RecipeInstructions = styled.p`
   font-size: 16px;
-  line-height: 1.6; /* Задаем межстрочный интервал для лучшей читаемости */
-  margin-bottom: 20px; /* Добавляем нижний отступ для разделения от следующего элемента */
+  line-height: 1.6;
+  margin-bottom: 20px;
 `;
 
 const RecipeTotalTime = styled.p`
   font-size: 16px;
-  font-weight: bold; /* Выделяем текст */
-  margin-bottom: 20px; /* Добавляем нижний отступ для разделения от следующего элемента */
+  font-weight: bold;
+  margin-bottom: 20px;
 `;
 
 export default IngredientsComponent;

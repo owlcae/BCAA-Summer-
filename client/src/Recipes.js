@@ -7,6 +7,7 @@ const GlobalStyle = createGlobalStyle`
     overflow-x: hidden;
   }
 `;
+
 function RecipesComponent() {
   const [recipes, setRecipes] = useState([]);
 
@@ -16,13 +17,12 @@ function RecipesComponent() {
         const request = await fetch('http://localhost:8000/recipes/list');
         const recipesData = await request.json();
         setRecipes(recipesData);
-        console.log("Recipes data fetch: " + JSON.stringify(recipesData));
       } catch (error) {
         console.error('Error fetching recipes:', error);
       }
     }
     fetchRecipes();
-  }, []); // вызываем один раз при монтировании
+  }, []);
 
   return (
     <PageWrapper>
@@ -31,28 +31,19 @@ function RecipesComponent() {
         <Heading>All recipes</Heading>
         <RecipesSection>
           <RecipesList>
-            {recipes.map((recipe, index) => {
-              console.log("Recipe at index", index, ":", recipe);
-              return (
-                <RecipeItem key={index}>
-                  <StyledLink to={`/recipe/${recipe.title}`}>
-                    <RecipeCard>
-                      <RecipeTitle>{recipe.title}</RecipeTitle>
-                      <RecipeDescription>{recipe.instructions}</RecipeDescription>
-                      <RecipeImagesWrapper>
+            {recipes.map((recipe, index) => (
+              <RecipeItem key={index}>
+                <StyledLink to={`/recipe/${recipe.title}`}>
+                  <RecipeCard>
+                    <RecipeTitle>{recipe.title}</RecipeTitle>
+                    <RecipeDescription>{recipe.instructions}</RecipeDescription>
+                    <RecipeImagesWrapper>
                       <RecipeImage key={index} src={recipe.image} alt={recipe.title} />
-                        {/* {recipe.images.map((image, i) => {
-                          console.log("Image at index", i, ":", image);
-                          return (
-                            <RecipeImage key={i} src={image} alt={recipe.name} />
-                          );
-                        })} */}
-                      </RecipeImagesWrapper>
-                    </RecipeCard>
-                  </StyledLink>
-                </RecipeItem>
-              );
-            })}
+                    </RecipeImagesWrapper>
+                  </RecipeCard>
+                </StyledLink>
+              </RecipeItem>
+            ))}
           </RecipesList>
         </RecipesSection>
       </ContentWrapper>
@@ -65,18 +56,17 @@ export const PageWrapper = styled.div`
   color: #000;
   font-size: 15px;
   font-weight: 400;
-  padding: 10px 60px 80px; // Ensure padding does not cause overflow
+  padding: 10px 60px 80px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%; // Control width to avoid overflow
-  box-sizing: border-box; // Include padding and border in the element's total width
+  width: 100%;
+  box-sizing: border-box;
 
   @media (max-width: 1400px) {
     padding: 0 20px;
   }
 `;
-
 
 const ContentWrapper = styled.div`
   display: flex;
@@ -85,7 +75,7 @@ const ContentWrapper = styled.div`
   max-width: 1160px;
   margin: auto;
   width: 100%;
-  text-align: center; /* добавляем центрирование для содержимого */
+  text-align: center;
 
   @media (max-width: 991px) {
     max-width: 100%;
@@ -113,11 +103,11 @@ export const RecipesSection = styled.section`
 `;
 
 const StyledLink = styled(Link)`
-  text-decoration: none; // Убирает подчеркивание
-  color: inherit; // Наследует цвет текста от родительского элемента
+  text-decoration: none;
+  color: inherit;
   &:hover {
-    text-decoration: none; // Убирает подчеркивание при наведении
-    color: inherit; // Можно изменить цвет при наведении если нужно
+    text-decoration: none;
+    color: inherit;
   }
 `;
 
@@ -128,13 +118,12 @@ export const RecipesList = styled.ul`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;
-  width: 100%; // Ensure it occupies only available space
+  width: 100%;
 
   @media (max-width: 991px) {
     grid-template-columns: 1fr;
   }
 `;
-
 
 export const RecipeItem = styled.li`
   margin-bottom: 50px;
@@ -158,19 +147,19 @@ export const RecipeTitle = styled.h2`
   margin-bottom: 20px;
 `;
 
-export  const RecipeDescription = styled.p`
+export const RecipeDescription = styled.p`
   font-family: 'Montserrat', sans-serif;
-  color: black; // Цвет текста, если дефолтный не подходит
-  font-size: 18px; // Размер шрифта увеличен для лучшей видимости
-  margin-top: 30px; // Увеличенный вертикальный отступ для разделения
-  display: block; // Ссылки ведут себя как блочные элементы
-  cursor: pointer; //
+  color: black;
+  font-size: 18px;
+  margin-top: 30px;
+  display: block;
+  cursor: pointer;
 `;
 
 export const RecipeImagesWrapper = styled.div`
   position: relative;
   width: 100%;
-  height: 250px; /* Примерное значение высоты */
+  height: 250px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -181,9 +170,7 @@ export const RecipeImagesWrapper = styled.div`
 export const RecipeImage = styled.img`
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Обеспечивает заполнение всей области, сохраняя при этом пропорции */
+  object-fit: cover;
 `;
-
-
 
 export default RecipesComponent;
