@@ -13,9 +13,9 @@ router.get("/get/:id", async (req, res) => {
   await GetRecipeAbl(req, res);
 });
 
-router.get("/search/:ingredientId", async (req, res) => {
+router.get("/search", async (req, res) => {
   try {
-    const ingredientId = req.params.ingredientId;
+    //const ingredientId = req.params.ingredientId;
     const results = await SearchByIngredientsAbl(ingredientId);
     res.json(results);
   } catch (error) {

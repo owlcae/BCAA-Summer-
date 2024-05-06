@@ -1,37 +1,74 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import styled, { createGlobalStyle } from 'styled-components';
-
+import * as recipeStyle from './Recipes';
+import * as infredientStyle from './RecipeTemplate'
 
 const GlobalStyle = createGlobalStyle`
   body, html {
     font-family: 'Montserrat', sans-serif;
-    color: #000; // Assuming you want black text
-    background-color: #fff; // Ensuring the background is white across all pages
+    color: #000;
+    background-color: #fff;
     margin: 0;
     padding: 0;
-    box-sizing: border-box; /* Устанавливаем box-sizing на всех элементах */
+    box-sizing: border-box;
     overflow-x: hidden;
   }
 `;
 
 function IngredientsComponent() {
-  const [ingredients, setIngredient] = useState([]);
+  const [ingredients, setIngredients] = useState([]);
+  const [searchedRecipes, setSearchedRecipes] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    async function fetchIngredient() {
+    async function fetchIngredients() {
       try {
         const request = await fetch('http://localhost:8000/ingredients/list');
-        const recipesData = await request.json();
-        setIngredient(recipesData);
-        console.log("Recipes data fetch: " + JSON.stringify(recipesData));
+        const ingredientsData = await request.json();
+        // Добавляем свойство "selected" для отслеживания выбранных ингредиентов
+        const ingredientsWithSelection = ingredientsData.map(ingredient => ({
+          ...ingredient,
+          selected: false
+        }));
+        setIngredients(ingredientsWithSelection);
+        console.log("Ingredients data fetch: " + JSON.stringify(ingredientsWithSelection));
       } catch (error) {
-        console.error('Error fetching recipes:', error);
+        console.error('Error fetching ingredients:', error);
       }
     }
-    fetchIngredient()
+    fetchIngredients();
   }, []); // вызываем один раз при монтировании
 
-  
+  // Обработчик изменения состояния выбора ингредиента
+  const handleIngredientSelect = id => {
+    setIngredients(prevIngredients =>
+      prevIngredients.map(ingredient =>
+        ingredient.id === id ? { ...ingredient, selected: !ingredient.selected } : ingredient
+      )
+    );
+  };
+
+  const handleSearchRecipes = async () => {
+    setLoading(true);
+    try {
+      const selectedIngredientIds = ingredients
+        .filter(ingredient => ingredient.selected)
+        .map(ingredient => ingredient.id);
+
+      const response = await axios.post('http://localhost:8000/recipes/search/', {
+        ingredientIds: selectedIngredientIds
+      });
+
+      setSearchedRecipes(response.data);
+    } catch (error) {
+      console.error('Error searching recipes:', error);
+    }
+    setLoading(false);
+  };
+
+
+  // Группировка ингредиентов по их группам
   const groupedIngredients = ingredients.reduce((acc, ingredient) => {
     if (!acc[ingredient.group]) {
       acc[ingredient.group] = [];
@@ -39,7 +76,7 @@ function IngredientsComponent() {
     acc[ingredient.group].push(ingredient);
     return acc;
   }, {});
-  
+
   return (
     <PageWrapper>
       <GlobalStyle />
@@ -52,7 +89,11 @@ function IngredientsComponent() {
               {groupedIngredients[groupName].map(ingredient => (
                 <li key={ingredient.id}>
                   <Label>
-                    <Checkbox />
+                    <Checkbox
+                      type="checkbox"
+                      checked={ingredient.selected}
+                      onChange={() => handleIngredientSelect(ingredient.id)}
+                    />
                     {ingredient.name}
                   </Label>
                 </li>
@@ -62,8 +103,40 @@ function IngredientsComponent() {
         ))}
       </ContentWrapper>
       <ButtonContainer>
-        <SearchButton>Search Recipes</SearchButton>
+        <SearchButton onClick={handleSearchRecipes} disabled={loading}>
+          {loading ? 'Searching...' : 'Search Recipes'}
+        </SearchButton>
       </ButtonContainer>
+      <infredientStyle.RecipeWrapper>
+        {searchedRecipes.length > 0 ? (
+          searchedRecipes.map(recipe => (
+            <recipeStyle.RecipeCard key={recipe.id}>
+              <recipeStyle.RecipeTitle>{recipe.title}</recipeStyle.RecipeTitle>
+              <recipeStyle.RecipeImage src={recipe.image} alt={recipe.title} />
+              <RecipeIngredients>
+                <h3>Ingredients:</h3>
+                <ul>
+                  {recipe.ingredients.map(ingredient => (
+                    <li key={ingredient.id}>
+                      {ingredient.quantity} {ingredient.unit} of {ingredient.name}
+                    </li>
+                  ))}
+                </ul>
+              </RecipeIngredients>
+              <RecipeInstructions>
+                <h3>Instructions:</h3>
+                <p>{recipe.instructions}</p>
+              </RecipeInstructions>
+              <RecipeTotalTime>
+                <h3>Total Time:</h3>
+                <p>{recipe.totalTime}</p>
+              </RecipeTotalTime>
+            </recipeStyle.RecipeCard>
+          ))
+        ) : (
+          null
+        )}
+      </infredientStyle.RecipeWrapper>
     </PageWrapper>
   );
 }
@@ -84,19 +157,19 @@ const PageWrapper = styled.div`
 const ContentWrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between; 
+  justify-content: space-between;
   width: 100%;
-  max-width: 100%; // Убедитесь, что это значение не превышает ширину родительского элемента
+  max-width: 100%;
   padding: 0 10px;
   margin: auto;
 `;
 
 const Category = styled.div`
-  flex: 1 1 20%; // Уменьшаем базовую ширину до 20%
+  flex: 1 1 20%;
   margin: 5px;
   padding: 10px;
   background-color: #fff;
-  box-sizing: border-box; // Это должно уже быть установлено, но убедитесь, что это правило применяется
+  box-sizing: border-box;
 
   ul {
     list-style-type: none;
@@ -108,7 +181,7 @@ const Category = styled.div`
   }
 
   @media (max-width: 1200px) {
-    flex: 1 1 45%; // Возможно, потребуется уменьшить это значение, если колонки все еще выходят за пределы экрана
+    flex: 1 1 45%;
   }
 
   @media (max-width: 768px) {
@@ -120,39 +193,39 @@ const HeroTitle = styled.h1`
   font-family: Montserrat, sans-serif;
   font-size: 45px;
   text-align: center;
-  width: 100%; // Ensure the title spans the full width
-  margin-bottom: 20px; // Add more space below the title
+  width: 100%;
+  margin-bottom: 20px;
 `;
 
 const CategoryTitle = styled.h2`
   font-size: 20px;
-  margin-bottom: 30px; // Increase margin for better visual separation
+  margin-bottom: 30px;
   background-color: #fff;
   border: 1px solid rgba(0, 0, 0, 0.11);
-  box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.1); /* Более легкая тень */
+  box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.1);
   padding: 20px;
   text-align: center;
 `;
 
-const Checkbox = styled.input.attrs({ type: 'checkbox' })`
+const Checkbox = styled.input`
   cursor: pointer;
-  width: 30px; // Ensure this is large enough to be visible
-  height: 30px; // Ensure this is large enough to be visible
-  margin-right: 10px; // Space between the checkbox and the label text
-  appearance: none; // Remove default system appearance
-  background: white; // Background color for checkbox
-  border: 1px solid black; // Solid border with color
-  border-radius: 8px; // Apply border-radius here
-  transition: background-color 0.3s, border-color 0.3s; // Smooth transition for visual feedback
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+  appearance: none;
+  background: white;
+  border: 1px solid black;
+  border-radius: 8px;
+  transition: background-color 0.3s, border-color 0.3s;
 
   &:checked {
-    background-color: #000; // Change background when checked
-    border-color: #000; // Ensure border color matches background
+    background-color: #000;
+    border-color: #000;
   }
 
   &:focus {
-    outline: none; // Removes the default focus outline
-    border-color: #666; // Optional: changes border color on focus for better accessibility
+    outline: none;
+    border-color: #666;
   }
 `;
 
@@ -164,10 +237,10 @@ const Label = styled.label`
 `;
 
 const ButtonContainer = styled.div`
-  width: 100%; // Занимает полную ширину
+  width: 100%;
   display: flex;
-  justify-content: center; // Центрирует содержимое по горизонтали
-  margin-top: 20px; // Отступ сверху для отделения от списка категорий
+  justify-content: center;
+  margin-top: 20px;
   margin-bottom: 60px;
 `;
 
@@ -181,13 +254,31 @@ const SearchButton = styled.button`
   background-color: white;
   color: black;
   cursor: pointer;
-  display: block; // Обеспечивает блочное отображение
-  margin: 0 auto; // Центрирует кнопку в своем контейнере
-  margin-top: 20px; // Дополнительный верхний отступ
+  display: block;
+  margin: 0 auto;
+  margin-top: 20px;
 
   &:hover {
     background-color: #f0f0f0;
   }
+`;
+
+const RecipeIngredients = styled.ul`
+  list-style-type: none;
+  padding: 0;
+  margin-bottom: 20px; /* Добавляем нижний отступ для разделения от следующего элемента */
+`;
+
+const RecipeInstructions = styled.p`
+  font-size: 16px;
+  line-height: 1.6; /* Задаем межстрочный интервал для лучшей читаемости */
+  margin-bottom: 20px; /* Добавляем нижний отступ для разделения от следующего элемента */
+`;
+
+const RecipeTotalTime = styled.p`
+  font-size: 16px;
+  font-weight: bold; /* Выделяем текст */
+  margin-bottom: 20px; /* Добавляем нижний отступ для разделения от следующего элемента */
 `;
 
 export default IngredientsComponent;

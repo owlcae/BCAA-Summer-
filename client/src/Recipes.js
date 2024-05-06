@@ -60,7 +60,7 @@ function RecipesComponent() {
   );
 }
 
-const PageWrapper = styled.div`
+export const PageWrapper = styled.div`
   background-color: #fff;
   color: #000;
   font-size: 15px;
@@ -106,7 +106,7 @@ const Heading = styled.h1`
   }
 `;
 
-const RecipesSection = styled.section`
+export const RecipesSection = styled.section`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -121,7 +121,7 @@ const StyledLink = styled(Link)`
   }
 `;
 
-const RecipesList = styled.ul`
+export const RecipesList = styled.ul`
   list-style: none;
   padding: 0;
   margin: 0;
@@ -136,7 +136,7 @@ const RecipesList = styled.ul`
 `;
 
 
-const RecipeItem = styled.li`
+export const RecipeItem = styled.li`
   margin-bottom: 50px;
 
   @media (max-width: 991px) {
@@ -144,7 +144,7 @@ const RecipeItem = styled.li`
   }
 `;
 
-const RecipeCard = styled.article`
+export const RecipeCard = styled.article`
   background-color: #fff;
   border: 1px solid rgba(0, 0, 0, 0.11);
   box-shadow: 0px 4px 9px 0px rgba(0, 0, 0, 0.25);
@@ -152,13 +152,13 @@ const RecipeCard = styled.article`
   text-align: center;
 `;
 
-const RecipeTitle = styled.h2`
+export const RecipeTitle = styled.h2`
   font: 700 20px Montserrat, sans-serif;
   color: #000;
   margin-bottom: 20px;
 `;
 
-const RecipeDescription = styled.p`
+export  const RecipeDescription = styled.p`
   font-family: 'Montserrat', sans-serif;
   color: black; // Цвет текста, если дефолтный не подходит
   font-size: 18px; // Размер шрифта увеличен для лучшей видимости
@@ -167,21 +167,23 @@ const RecipeDescription = styled.p`
   cursor: pointer; //
 `;
 
-const RecipeImagesWrapper = styled.div`
+export const RecipeImagesWrapper = styled.div`
   position: relative;
-  width: 450px;
-  min-height: 185px;
+  width: 100%;
+  height: 250px; /* Примерное значение высоты */
   display: flex;
   justify-content: center;
   align-items: center;
   margin-top: 20px;
+  overflow: hidden;
 `;
 
-const RecipeImage = styled.img`
-  width: 100%; /* Установить ширину изображения на 100% контейнера */
-  min-height: 185px;
-  margin-top: 20px;
-  margin-left: 20px;
+export const RecipeImage = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Обеспечивает заполнение всей области, сохраняя при этом пропорции */
 `;
+
+
 
 export default RecipesComponent;

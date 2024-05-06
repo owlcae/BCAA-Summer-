@@ -64,48 +64,70 @@ const RecipePage = () => {
   );
 };
 
-const RecipeWrapper = styled.section`
+export const RecipeWrapper = styled.section`
   padding: 20px;
   background-color: #fff;
   color: #000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
-const RecipeImage = styled.img`
-  width: 100%;
-  aspect-ratio: 1.32;
-  object-fit: cover;
-  object-position: center;
+export const RecipeImage = styled.img`
+  width: 300px; /* Задаем фиксированную ширину */
+  height: 300px; /* Задаем фиксированную высоту */
+  object-fit: cover; /* Обеспечивает заполнение всей области, сохраняя при этом пропорции */
+  object-position: center; /* Центрируем изображение */
+  border-radius: 0; /* Убираем скругление, чтобы изображение было квадратным */
+  margin-bottom: 20px;
 `;
 
-const RecipeTitle = styled.h1`
+export const RecipeTitle = styled.h1`
   font-family: 'Montserrat', sans-serif;
   font-size: 24px;
   text-align: center;
   margin-top: 20px;
 `;
 
-const RecipeDescription = styled.p`
+export const RecipeDescription = styled.p`
   font-family: 'Montserrat', sans-serif;
   font-size: 18px;
   margin-top: 10px;
 `;
 
-const IngredientsList = styled.ul`
+export const IngredientsList = styled.ul`
   list-style: none;
   padding: 0;
   margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 `;
 
-const Ingredient = styled.li`
+export const Ingredient = styled.li`
   font-family: 'Montserrat', sans-serif;
   font-size: 16px;
   padding: 5px 0;
 `;
 
-const Instructions = styled.p`
+export const Instructions = styled.p`
+  font-family: 'Montserrat', sans-serif;
+  font-size: 18px;
+  margin-top: 20px;
+  text-align: center; /* Center-align the text */
+`;
+
+export const LoadingWrapper = styled.div`
   font-family: 'Montserrat', sans-serif;
   font-size: 18px;
   margin-top: 20px;
 `;
+
+// const ErrorWrapper = styled.div`
+//   font-family: 'Montserrat', sans-serif;
+//   font-size: 18px;
+//   margin-top: 20px;
+//   color: red;
+// `;
 
 export default RecipePage;

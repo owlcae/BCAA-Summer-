@@ -3,19 +3,13 @@ const fs = require('fs');
 
 const recipeFolderPath = path.join(global.projectRoot, 'dao', 'storage', 'recipeList');
 
-if (!fs.existsSync(recipeFolderPath)) {
-  fs.mkdirSync(recipeFolderPath, { recursive: true });
-  console.log('Directory created:', recipeFolderPath);
-} else {
-  console.log('Directory already exists:', recipeFolderPath);
-}
-
 const recipeDao = require('../../dao/recipe-dao');
 
 async function searchByIngredientsAbl(req, res) {
   try {
       const ingredientIds = req.body.ingredientIds;
-
+    
+      console.log("ingredientIds" + ingredientIds)
       if (!Array.isArray(ingredientIds) || ingredientIds.length === 0) {
           return res.status(400).json({
               code: "noIngredientsProvided",

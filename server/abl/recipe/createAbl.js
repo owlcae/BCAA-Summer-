@@ -12,6 +12,7 @@ const schema = {
   type: "object",
   properties: {
     title: { type: "string" },
+    image: { type: "string"},
     ingredients: {
       type: "array",
       items: {
