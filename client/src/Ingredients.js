@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 
-const request = await fetch("http://localhost:8000/ingredients/list");
 
 const GlobalStyle = createGlobalStyle`
   body, html {
@@ -13,47 +12,61 @@ const GlobalStyle = createGlobalStyle`
     box-sizing: border-box; /* Устанавливаем box-sizing на всех элементах */
     overflow-x: hidden;
   }
-`; 
+`;
 
-const categories = {
-    "Spices and Herbs": ["Basil", "Black pepper", "Cilantro", "Cumin", "Dill", "Oregano", "Parsley", "Rosemary", "Salt", "Thyme", "Turmeric"],
-    "Dairy Products": ["Butter", "Cheese", "Cream", "Milk", "Yogurt"],
-    "Vegetables": ["Broccoli", "Carrots", "Cucumbers", "Garlic", "Onions", "Peppers", "Potatoes", "Tomatoes"],
-    "Sweeteners": ["Honey", "Maple syrup", "Sugar"],
-    "Oils and Fats": ["Canola oil", "Coconut oil", "Olive oil", "Sesame oil"],
-    "Proteins": ["Beef", "Chicken", "Eggs", "Fish", "Lamb", "Lentils", "Pork", "Shellfish", "Tofu"],
-    "Grains": ["Barley", "Corn", "Oats", "Rice", "Wheat"],
-    "Fruits": ["Apples", "Bananas", "Cherries", "Lemons", "Oranges", "Strawberries"]
-  };
+function IngredientsComponent() {
+  const [ingredients, setIngredient] = useState([]);
 
-  function IngredientsComponent() {
-    return (
-      <PageWrapper>
-        <GlobalStyle />
-        <ContentWrapper>
-          <HeroTitle>All ingredients</HeroTitle>
-          {Object.keys(categories).map(category => (
-            <Category key={category}>
-              <CategoryTitle>{category}</CategoryTitle>
-              <ul>
-                {categories[category].map(ingredient => (
-                  <li key={ingredient}>
-                    <Label>
-                      <Checkbox />
-                      {ingredient}
-                    </Label>
-                  </li>
-                ))}
-              </ul>
-            </Category>
-          ))}
-        </ContentWrapper>
-        <ButtonContainer>
-          <SearchButton>Search Recipes</SearchButton>
-        </ButtonContainer>
-      </PageWrapper>
-    );
-  }
+  useEffect(() => {
+    async function fetchIngredient() {
+      try {
+        const request = await fetch('http://localhost:8000/ingredients/list');
+        const recipesData = await request.json();
+        setIngredient(recipesData);
+        console.log("Recipes data fetch: " + JSON.stringify(recipesData));
+      } catch (error) {
+        console.error('Error fetching recipes:', error);
+      }
+    }
+    fetchIngredient()
+  }, []); // вызываем один раз при монтировании
+
+  
+  const groupedIngredients = ingredients.reduce((acc, ingredient) => {
+    if (!acc[ingredient.group]) {
+      acc[ingredient.group] = [];
+    }
+    acc[ingredient.group].push(ingredient);
+    return acc;
+  }, {});
+  
+  return (
+    <PageWrapper>
+      <GlobalStyle />
+      <ContentWrapper>
+        <HeroTitle>All ingredients</HeroTitle>
+        {Object.keys(groupedIngredients).map(groupName => (
+          <Category key={groupName}>
+            <CategoryTitle>{groupName}</CategoryTitle>
+            <ul>
+              {groupedIngredients[groupName].map(ingredient => (
+                <li key={ingredient.id}>
+                  <Label>
+                    <Checkbox />
+                    {ingredient.name}
+                  </Label>
+                </li>
+              ))}
+            </ul>
+          </Category>
+        ))}
+      </ContentWrapper>
+      <ButtonContainer>
+        <SearchButton>Search Recipes</SearchButton>
+      </ButtonContainer>
+    </PageWrapper>
+  );
+}
 
 // Styled Components
 const PageWrapper = styled.div`

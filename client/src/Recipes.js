@@ -27,7 +27,7 @@ function RecipesComponent() {
   return (
     <PageWrapper>
       <GlobalStyle />
-      <ContentWrapper>
+      <ContentWrapper> 
         <Heading>All recipes</Heading>
         <RecipesSection>
           <RecipesList>

@@ -18,9 +18,17 @@ function get(ingredientId) {
 }
 
 function list() {
-    return fs.readdirSync(ingredientFolderPath)
-        .map(file => readIngredientFile(path.join(ingredientFolderPath, file)))
-        .filter(Boolean);
+  try {
+    const files = fs.readdirSync(ingredientFolderPath);
+    return files.map(file => {
+      const filePath = path.join(ingredientFolderPath, file);
+      const recipeData = fs.readFileSync(filePath, "utf8");
+      return JSON.parse(recipeData);
+    });
+  } catch (error) {
+    console.error('Failed to list all recipes:', error);
+    return [];
+  }
 }
 
 function createOrUpdate(ingredientData) {
