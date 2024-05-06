@@ -3,33 +3,49 @@ import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import axios from 'axios';
 
-const RecipeTemp = () => {
+const RecipePage = () => {
+  const { recipeTitle } = useParams();
   const [recipe, setRecipe] = useState(null);
   const [error, setError] = useState('');
-  const { recipeName } = useParams();
+  const [isNewRecipe, setIsNewRecipe] = useState(false); // Флаг нового рецепта
 
   useEffect(() => {
-    const fetchRecipe = async () => {
-      try {
-        const response = await axios.get(`http://localhost:8000/recipes/${recipeName}`);
-        setRecipe(response.data);
-        setError(''); 
-      } catch (error) {
-        console.error('Error fetching recipe data:', error);
-        setError('Failed to fetch recipe');
-      }
-    };
+    if (isNewRecipe) {
+      // Запрос на получение нового рецепта
+      axios.get('http://localhost:8000/recipes/create')
+        .then(response => {
+          setRecipe(response.data);
+          setError('');
+        })
+        .catch(error => {
+          console.error('Error fetching new recipe:', error);
+          setError('Failed to fetch new recipe');
+        });
+    } else {
+      // Запрос на получение существующего рецепта
+      axios.get(`http://localhost:8000/recipes/?recipeTitle=${recipeTitle}`)
+        .then(response => {
+          setRecipe(response.data);
+          setError('');
+        })
+        .catch(error => {
+          console.error('Error fetching recipe data:', error);
+          setError('Failed to fetch recipe');
+        });
+    }
+  }, [isNewRecipe, recipeTitle]);
 
-    fetchRecipe();
-  }, [recipeName]); 
+  // Если произошла ошибка при загрузке рецепта
   if (error) {
     return <p>Error: {error}</p>;
   }
 
+  // Если рецепт ещё не загружен
   if (!recipe) {
-    return <p>Loading...</p>; 
+    return <p>Loading...</p>;
   }
 
+  // Отображение рецепта с помощью стилей
   return (
     <RecipeWrapper>
       <RecipeImage src={recipe.image} alt={recipe.title} />
@@ -93,4 +109,4 @@ const Instructions = styled.p`
   margin-top: 20px;
 `;
 
-export default RecipeTemp;
+export default RecipePage;

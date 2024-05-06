@@ -1,6 +1,8 @@
 import React from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 
+const request = await fetch("http://localhost:8000/ingredients/list");
+
 const GlobalStyle = createGlobalStyle`
   body, html {
     font-family: 'Montserrat', sans-serif;

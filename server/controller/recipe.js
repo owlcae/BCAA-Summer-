@@ -4,12 +4,16 @@ const router = express.Router();
 const GetRecipeAbl = require("../abl/recipe/getAbl");
 const GetRecipeAblByTitle = require("../abl/recipe/getAblByTitle");
 const ListRecipesAbl = require("../abl/recipe/listAbl");
-const CreateRecipeAbl = require("../abl/recipe/createAbl"); 
+const { CreateRecipeAbl } = require("../abl/recipe/createAbl");
 const UpdateRecipeAbl = require("../abl/recipe/updateAbl");
 const DeleteRecipeAbl = require("../abl/recipe/deleteAbl");
 const SearchByIngredientsAbl = require('../abl/recipe/searchByIngredientsAbl');
 
-router.get('/search/:ingredientId', async (req, res) => {
+router.get("/get/:id", async (req, res) => {
+  await GetRecipeAbl(req, res);
+});
+
+router.get("/search/:ingredientId", async (req, res) => {
   try {
     const ingredientId = req.params.ingredientId;
     const results = await SearchByIngredientsAbl(ingredientId);
@@ -17,14 +21,6 @@ router.get('/search/:ingredientId', async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-});
-
-router.get("/get", async (req, res) => {
-  await GetRecipeAbl(req, res);
-});
-
-router.get("/title", async (req, res) => {
-  await GetRecipeAblByTitle(req, res);
 });
 
 router.get("/list", async (req, res) => {
@@ -45,6 +41,10 @@ router.delete("/delete/:id", async (req, res) => {
 
 router.post("/search", async (req, res) => {
   await SearchByIngredientsAbl(req, res);
+});
+
+router.get("/:recipeTitle", async (req, res) => {
+  await GetRecipeAblByTitle(req, res);
 });
 
 module.exports = router;

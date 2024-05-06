@@ -8,7 +8,7 @@ import RecipesComponent from './Recipes';
 import IngredientsComponent from './Ingredients';
 import RegisterComponent from './SignUp';
 import LoginComponent from './SingIn';
-import RecipeTemp from './RecipeTemplate'; 
+import RecipePage from './RecipeTemplate'; 
 
 const GlobalStyle = createGlobalStyle`
   body, html {
@@ -30,7 +30,7 @@ function App() {
         <Route path="/ingredients" element={<IngredientsComponent />} />
         <Route path="/register" element={<RegisterComponent />} />
         <Route path="/signin" element={<LoginComponent />} />
-        <Route path="/recipe/:recipeName" element={<RecipeTemp />} />
+        <Route path="/recipes/:recipeTitle" element={<RecipePage />} />
       </Routes>
     </Router>
   );

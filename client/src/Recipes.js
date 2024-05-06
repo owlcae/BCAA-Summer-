@@ -1,44 +1,29 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
 
 const GlobalStyle = createGlobalStyle`
   body, html {
     overflow-x: hidden;
   }
 `;
-
-const request = await fetch("http://localhost:8000/recipes/list");
-const recipes = await request.json;
-
-//   {
-//     name: "Plov",
-//     description:
-//       "Plov (also known as pilaf) is a popular dish in Central Asian cuisine, known for its aromatic combination of rice, meat, and vegetables. Here's a classic recipe for making Uzbek-style plov:",
-//     images: ["https://cdn.builder.io/api/v1/image/assets/TEMP/a5c2f3f62d2853d1e9128f08a8e13bcefd386eae766dd0ec8ac7caf506aa245d?apiKey=9b12d59bfff844d1ab390f3fa02ebad3&"],
-//   },
-//   {
-//     name: "Beshparmak",
-//     description:
-//       'Beshbarmak is a traditional dish from Central Asia, particularly popular in Kazakhstan and Kyrgyzstan. The name means "five fingers" because the dish is traditionally eaten with the hands.',
-//     images: ["https://cdn.builder.io/api/v1/image/assets/TEMP/a5c2f3f62d2853d1e9128f08a8e13bcefd386eae766dd0ec8ac7caf506aa245d?apiKey=9b12d59bfff844d1ab390f3fa02ebad3&"],
-//   },
-//   {
-//     name: "Plov",
-//     description:
-//       "Plov (also known as pilaf) is a popular dish in Central Asian cuisine, known for its aromatic combination of rice, meat, and vegetables. Here's a classic recipe for making Uzbek-style plov:",
-//     images: ["https://cdn.builder.io/api/v1/image/assets/TEMP/a5c2f3f62d2853d1e9128f08a8e13bcefd386eae766dd0ec8ac7caf506aa245d?apiKey=9b12d59bfff844d1ab390f3fa02ebad3&"],
-//   },
-//   {
-//     name: "Beshparmak",
-//     description:
-//       'Beshbarmak is a traditional dish from Central Asia, particularly popular in Kazakhstan and Kyrgyzstan. The name means "five fingers" because the dish is traditionally eaten with the hands.',
-//     images: ["https://cdn.builder.io/api/v1/image/assets/TEMP/a5c2f3f62d2853d1e9128f08a8e13bcefd386eae766dd0ec8ac7caf506aa245d?apiKey=9b12d59bfff844d1ab390f3fa02ebad3&"],
-//   },
-// ];
-
 function RecipesComponent() {
+  const [recipes, setRecipes] = useState([]);
+
+  useEffect(() => {
+    async function fetchRecipes() {
+      try {
+        const request = await fetch('http://localhost:8000/recipes/list');
+        const recipesData = await request.json();
+        setRecipes(recipesData);
+        console.log("Recipes data fetch: " + JSON.stringify(recipesData));
+      } catch (error) {
+        console.error('Error fetching recipes:', error);
+      }
+    }
+    fetchRecipes();
+  }, []); // вызываем один раз при монтировании
+
   return (
     <PageWrapper>
       <GlobalStyle />
@@ -46,21 +31,28 @@ function RecipesComponent() {
         <Heading>All recipes</Heading>
         <RecipesSection>
           <RecipesList>
-            {recipes.map((recipe, index) => (
-              <RecipeItem key={index}>
-                <StyledLink to={`/recipe/${recipe.name}`}>
-                  <RecipeCard>
-                    <RecipeTitle>{recipe.name}</RecipeTitle>
-                    <RecipeDescription>{recipe.description}</RecipeDescription>
-                    <RecipeImagesWrapper>
-                      {recipe.images.map((image, i) => (
-                        <RecipeImage key={i} src={image} alt={recipe.name} />
-                      ))}
-                    </RecipeImagesWrapper>
-                  </RecipeCard>
-                </StyledLink>
-              </RecipeItem>
-            ))}
+            {recipes.map((recipe, index) => {
+              console.log("Recipe at index", index, ":", recipe);
+              return (
+                <RecipeItem key={index}>
+                  <StyledLink to={`/recipe/${recipe.title}`}>
+                    <RecipeCard>
+                      <RecipeTitle>{recipe.title}</RecipeTitle>
+                      <RecipeDescription>{recipe.instructions}</RecipeDescription>
+                      <RecipeImagesWrapper>
+                      <RecipeImage key={index} src={recipe.image} alt={recipe.title} />
+                        {/* {recipe.images.map((image, i) => {
+                          console.log("Image at index", i, ":", image);
+                          return (
+                            <RecipeImage key={i} src={image} alt={recipe.name} />
+                          );
+                        })} */}
+                      </RecipeImagesWrapper>
+                    </RecipeCard>
+                  </StyledLink>
+                </RecipeItem>
+              );
+            })}
           </RecipesList>
         </RecipesSection>
       </ContentWrapper>

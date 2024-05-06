@@ -1,6 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 
+// const request = await fetch("http://localhost:8000/ingredients/list");
+
 function Hero() {
   const handleSearch = () => {
     console.log("Search initiated!");
