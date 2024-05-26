@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
+import {Link} from "react-router-dom";
 
-function IngredientsComponent() {
+export function IngredientsComponent() {
   const [ingredients, setIngredients] = useState([]);
   const [searchedRecipes, setSearchedRecipes] = useState([]);
   const [loading, setLoading] = useState(false);
+
 
   useEffect(() => {
     async function fetchIngredients() {
@@ -54,27 +56,6 @@ function IngredientsComponent() {
     setLoading(false);
   };
 
-  // const handleSearchRecipes = async () => {
-  //   setLoading(true);
-  //   try {
-  //     const selectedIngredientIds = ingredients
-  //         .filter((ingredient) => ingredient.selected)
-  //         .map((ingredient) => ingredient.id);
-  //
-  //     // Log the selected ingredient IDs
-  //     console.log("Selected Ingredient IDs:", selectedIngredientIds);
-  //
-  //     const response = await axios.post('http://localhost:8000/recipes/search', {
-  //       ingredientIds: selectedIngredientIds
-  //     });
-  //
-  //     setSearchedRecipes(response.data);
-  //   } catch (error) {
-  //     console.error('Error searching recipes:', error);
-  //   }
-  //   setLoading(false);
-  // };
-  //
   const groupedIngredients = ingredients.reduce((acc, ingredient) => {
     if (!acc[ingredient.group]) {
       acc[ingredient.group] = [];
@@ -113,30 +94,23 @@ function IngredientsComponent() {
           </SearchButton>
         </ButtonContainer>
         <RecipeWrapper>
-          {searchedRecipes.length > 0 && searchedRecipes.map((recipe) => (
-              <RecipeCard key={recipe.id}>
-                <RecipeTitle>{recipe.title}</RecipeTitle>
-                <RecipeImage src={recipe.image} alt={recipe.title} />
-                <RecipeIngredients>
-                  <h3>Ingredients:</h3>
-                  <ul>
-                    {recipe.ingredients.map((ingredient) => (
-                        <li key={ingredient.id}>
-                          {ingredient.amount} {ingredient.unit} of {ingredient.name}
-                        </li>
-                    ))}
-                  </ul>
-                </RecipeIngredients>
-                <RecipeInstructions>
-                  <h3>Instructions:</h3>
-                  <p>{recipe.instructions}</p>
-                </RecipeInstructions>
-                <RecipeTotalTime>
-                  <h3>Total Time:</h3>
-                  <p>{recipe.totalTime}</p>
-                </RecipeTotalTime>
-              </RecipeCard>
-          ))}
+          <RecipesList>
+            {searchedRecipes.length > 0 && searchedRecipes.map((recipe, index) => (
+                <RecipeItem key={index}>
+                  <StyledLink to={`/recipe/${recipe.title}`}>
+                    <RecipeCard>
+                      <RecipeTitle>{recipe.title}</RecipeTitle>
+                      <RecipeInstructions>
+                        <p>{recipe.instructions}</p>
+                      </RecipeInstructions>
+                      <RecipeImagesWrapper>
+                      <RecipeImage src={recipe.image} alt={recipe.title} />
+                      </RecipeImagesWrapper>
+                    </RecipeCard>
+                  </StyledLink>
+                </RecipeItem>
+            ))}
+          </RecipesList>
         </RecipeWrapper>
       </PageWrapper>
   );
@@ -148,6 +122,7 @@ const PageWrapper = styled.div`
   font-size: 15px;
   font-weight: 400;
   padding: 10px 60px 80px;
+  overflow-x: hidden;
 
   @media (max-width: 1400px) {
     padding: 0 20px;
@@ -161,7 +136,7 @@ const ContentWrapper = styled.div`
   width: 100%;
   max-width: 100%;
   padding: 0 10px;
-  margin: auto;
+  overflow-x: hidden;
 `;
 
 const Category = styled.div`
@@ -207,7 +182,7 @@ const CategoryTitle = styled.h2`
   text-align: center;
 `;
 
-const Checkbox = styled.input`
+export const Checkbox = styled.input`
   cursor: pointer;
   width: 30px;
   height: 30px;
@@ -229,7 +204,7 @@ const Checkbox = styled.input`
   }
 `;
 
-const Label = styled.label`
+export const Label = styled.label`
   display: flex;
   align-items: center;
   cursor: pointer;
@@ -270,46 +245,85 @@ const RecipeWrapper = styled.div`
   max-width: 100%;
   padding: 0 10px;
   margin: auto;
+  overflow-x: hidden;
+`;
+
+const RecipesList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  width: 100%;
+
+  @media (max-width: 991px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const StyledLink = styled(Link)`
+  text-decoration: none;
+  color: inherit;
+  &:hover {
+    text-decoration: none;
+    color: inherit;
+  }
+`;
+
+const RecipeItem = styled.li`
+  margin-bottom: 50px;
+
+  @media (max-width: 991px) {
+    margin-bottom: 40px;
+  }
 `;
 
 const RecipeCard = styled.div`
-  width: 300px;
-  margin: 20px;
   background-color: #fff;
-  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.11);
+  box-shadow: 0 4px 9px 0 rgba(0, 0, 0, 0.25);
+  padding: 29px;
+  text-align: center;
+  height: 450px;  // Set a fixed height for the card
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 `;
 
 const RecipeTitle = styled.h2`
   font-size: 20px;
-  margin-bottom: 20px;
+`;
+
+const RecipeImagesWrapper = styled.div`
+  position: relative;
+  width: 100%;
+  height: 250px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  overflow: hidden;
 `;
 
 const RecipeImage = styled.img`
   width: 100%;
-  height: auto;
-  border-radius: 8px;
-  margin-bottom: 20px;
-`;
-
-const RecipeIngredients = styled.div`
-  ul {
-    list-style-type: none;
-    padding: 0;
-  }
+  height: 100%;
+  object-fit: cover;
 `;
 
 const RecipeInstructions = styled.div`
-  font-size: 16px;
-  line-height: 1.6;
-  margin-bottom: 20px;
-`;
-
-const RecipeTotalTime = styled.div`
-  font-size: 16px;
-  font-weight: bold;
-  margin-bottom: 20px;
+  font-family: 'Montserrat', sans-serif;
+  color: black;
+  font-size: 18px;
+  display: block;
+  cursor: pointer;
+  height: 100px;  // Set a fixed height for the description
+  overflow: hidden;  // Hide overflow text
+  text-overflow: ellipsis;  // Add ellipsis to overflow text
+  display: -webkit-box;
+  -webkit-line-clamp: 5;  // Limit to 5 lines
+  -webkit-box-orient: vertical;
 `;
 
 export default IngredientsComponent;

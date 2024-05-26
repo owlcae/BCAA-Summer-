@@ -2,24 +2,14 @@ import React from 'react';
 import styled from 'styled-components';
 
 function Hero() {
-  return (
-    <HeroSection>
-      <SeeAllLink href="/ingredients">See all ingredients</SeeAllLink>
-      <SeeAllLink href="/recipes">See all recipes</SeeAllLink>
-    </HeroSection>
-  );
+    return (
+        <HeroSection>
+            <Heading>Welcome to PantryChef!</Heading>
+            <SeeAllLink href="/ingredients">See all ingredients</SeeAllLink>
+            <SeeAllLink href="/recipes">See all recipes</SeeAllLink>
+        </HeroSection>
+    );
 }
-
-function SearchComponent() {
-  return (
-    <PageWrapper>
-      <ContentWrapper>
-        <Hero />
-      </ContentWrapper>
-    </PageWrapper>
-  );
-}
-
 const PageWrapper = styled.div`
   background-color: #fff;
   color: #000;
@@ -56,6 +46,19 @@ const HeroSection = styled.section`
   }
 `;
 
+const Heading = styled.h1`
+  font-family: Montserrat, sans-serif;
+  font-size: 45px;
+  text-align: center;
+  color: #000;
+  margin-bottom: 60px;
+  margin-top: 60px;
+
+  @media (max-width: 991px) {
+    margin-bottom: 40px;
+  }
+`;
+
 const SeeAllLink = styled.a`
   font-family: 'Montserrat', sans-serif;
   text-decoration: underline;
@@ -70,4 +73,4 @@ const SeeAllLink = styled.a`
   }
 `;
 
-export default SearchComponent;
+export default Hero;

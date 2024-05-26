@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { createGlobalStyle } from 'styled-components';
 
 import Header from './Headerstyles'; // Подразумевается, что у вас есть компонент Header
-import SearchComponent from './SearchByIngredients';
+import Hero from './Hero';
 import RecipesComponent from './Recipes';
 import IngredientsComponent from './Ingredients';
 import RegisterComponent from './SignUp';
@@ -25,7 +25,7 @@ function App() {
       <GlobalStyle />
       <Header />
       <Routes>
-        <Route path="/" element={<SearchComponent />} />
+        <Route path="/" element={<Hero />} />
         <Route path="/recipes" element={<RecipesComponent />} />
         <Route path="/ingredients" element={<IngredientsComponent />} />
         <Route path="/register" element={<RegisterComponent />} />

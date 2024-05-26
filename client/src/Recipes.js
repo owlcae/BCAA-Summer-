@@ -8,7 +8,7 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
-function RecipesComponent() {
+export function RecipesComponent() {
   const [recipes, setRecipes] = useState([]);
 
   useEffect(() => {
@@ -135,7 +135,7 @@ export const RecipeItem = styled.li`
 export const RecipeCard = styled.article`
   background-color: #fff;
   border: 1px solid rgba(0, 0, 0, 0.11);
-  box-shadow: 0px 4px 9px 0px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 9px 0 rgba(0, 0, 0, 0.25);
   padding: 29px;
   text-align: center;
   height: 450px;  // Set a fixed height for the card
