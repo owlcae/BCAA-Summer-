@@ -37,7 +37,7 @@ const RecipePage = () => {
       <IngredientsList>
         {recipe.ingredients.map((ingredient, index) => (
           <Ingredient key={index}>
-            {ingredient.quantity} {ingredient.unit} {ingredient.name}
+              {ingredient.name}
           </Ingredient>
         ))}
       </IngredientsList>

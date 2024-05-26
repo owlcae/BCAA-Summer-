@@ -1,20 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import styled, { createGlobalStyle } from 'styled-components';
-import * as recipeStyle from './Recipes';
-import * as infredientStyle from './RecipeTemplate';
-
-const GlobalStyle = createGlobalStyle`
-  body, html {
-    font-family: 'Montserrat', sans-serif;
-    color: #000;
-    background-color: #fff;
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    overflow-x: hidden;
-  }
-`;
+import styled from 'styled-components';
 
 function IngredientsComponent() {
   const [ingredients, setIngredients] = useState([]);
@@ -26,7 +12,7 @@ function IngredientsComponent() {
       try {
         const request = await fetch('http://localhost:8000/ingredients/list');
         const ingredientsData = await request.json();
-        const ingredientsWithSelection = ingredientsData.map(ingredient => ({
+        const ingredientsWithSelection = ingredientsData.map((ingredient) => ({
           ...ingredient,
           selected: false
         }));
@@ -35,14 +21,15 @@ function IngredientsComponent() {
         console.error('Error fetching ingredients:', error);
       }
     }
-    fetchIngredients();
-  }, []); 
+    fetchIngredients().then(r => {
+    });
+  }, []);
 
-  const handleIngredientSelect = id => {
+  const handleIngredientSelect = (id) => {
     setIngredients(prevIngredients =>
-      prevIngredients.map(ingredient =>
-        ingredient.id === id ? { ...ingredient, selected: !ingredient.selected } : ingredient
-      )
+        prevIngredients.map(ingredient =>
+            ingredient.id === id ? { ...ingredient, selected: !ingredient.selected } : ingredient
+        )
     );
   };
 
@@ -50,13 +37,16 @@ function IngredientsComponent() {
     setLoading(true);
     try {
       const selectedIngredientIds = ingredients
-        .filter(ingredient => ingredient.selected)
-        .map(ingredient => ingredient.id);
+          .filter((ingredient) => ingredient.selected)
+          .map((ingredient) => ingredient.id);
 
-      const response = await axios.post('http://localhost:8000/recipes/search/', {
+      console.log('Selected Ingredient IDs:', selectedIngredientIds);
+
+      const response = await axios.post('http://localhost:8000/search', {
         ingredientIds: selectedIngredientIds
       });
 
+      console.log('Response:', response.data);
       setSearchedRecipes(response.data);
     } catch (error) {
       console.error('Error searching recipes:', error);
@@ -64,6 +54,27 @@ function IngredientsComponent() {
     setLoading(false);
   };
 
+  // const handleSearchRecipes = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const selectedIngredientIds = ingredients
+  //         .filter((ingredient) => ingredient.selected)
+  //         .map((ingredient) => ingredient.id);
+  //
+  //     // Log the selected ingredient IDs
+  //     console.log("Selected Ingredient IDs:", selectedIngredientIds);
+  //
+  //     const response = await axios.post('http://localhost:8000/recipes/search', {
+  //       ingredientIds: selectedIngredientIds
+  //     });
+  //
+  //     setSearchedRecipes(response.data);
+  //   } catch (error) {
+  //     console.error('Error searching recipes:', error);
+  //   }
+  //   setLoading(false);
+  // };
+  //
   const groupedIngredients = ingredients.reduce((acc, ingredient) => {
     if (!acc[ingredient.group]) {
       acc[ingredient.group] = [];
@@ -73,66 +84,61 @@ function IngredientsComponent() {
   }, {});
 
   return (
-    <PageWrapper>
-      <GlobalStyle />
-      <ContentWrapper>
-        <HeroTitle>All ingredients</HeroTitle>
-        {Object.keys(groupedIngredients).map(groupName => (
-          <Category key={groupName}>
-            <CategoryTitle>{groupName}</CategoryTitle>
-            <ul>
-              {groupedIngredients[groupName].map(ingredient => (
-                <li key={ingredient.id}>
-                  <Label>
-                    <Checkbox
-                      type="checkbox"
-                      checked={ingredient.selected}
-                      onChange={() => handleIngredientSelect(ingredient.id)}
-                    />
-                    {ingredient.name}
-                  </Label>
-                </li>
-              ))}
-            </ul>
-          </Category>
-        ))}
-      </ContentWrapper>
-      <ButtonContainer>
-        <SearchButton onClick={handleSearchRecipes} disabled={loading}>
-          {loading ? 'Searching...' : 'Search Recipes'}
-        </SearchButton>
-      </ButtonContainer>
-      <infredientStyle.RecipeWrapper>
-        {searchedRecipes.length > 0 ? (
-          searchedRecipes.map(recipe => (
-            <recipeStyle.RecipeCard key={recipe.id}>
-              <recipeStyle.RecipeTitle>{recipe.title}</recipeStyle.RecipeTitle>
-              <recipeStyle.RecipeImage src={recipe.image} alt={recipe.title} />
-              <RecipeIngredients>
-                <h3>Ingredients:</h3>
+      <PageWrapper>
+        <ContentWrapper>
+          <HeroTitle>All ingredients</HeroTitle>
+          {Object.keys(groupedIngredients).map((groupName) => (
+              <Category key={groupName}>
+                <CategoryTitle>{groupName}</CategoryTitle>
                 <ul>
-                  {recipe.ingredients.map(ingredient => (
-                    <li key={ingredient.id}>
-                      {ingredient.quantity} {ingredient.unit} of {ingredient.name}
-                    </li>
+                  {groupedIngredients[groupName].map((ingredient) => (
+                      <li key={ingredient.id}>
+                        <Label>
+                          <Checkbox
+                              type="checkbox"
+                              checked={ingredient.selected}
+                              onChange={() => handleIngredientSelect(ingredient.id)}
+                          />
+                          {ingredient.name}
+                        </Label>
+                      </li>
                   ))}
                 </ul>
-              </RecipeIngredients>
-              <RecipeInstructions>
-                <h3>Instructions:</h3>
-                <p>{recipe.instructions}</p>
-              </RecipeInstructions>
-              <RecipeTotalTime>
-                <h3>Total Time:</h3>
-                <p>{recipe.totalTime}</p>
-              </RecipeTotalTime>
-            </recipeStyle.RecipeCard>
-          ))
-        ) : (
-          null
-        )}
-      </infredientStyle.RecipeWrapper>
-    </PageWrapper>
+              </Category>
+          ))}
+        </ContentWrapper>
+        <ButtonContainer>
+          <SearchButton onClick={handleSearchRecipes} disabled={loading}>
+            {loading ? 'Searching...' : 'Search Recipes'}
+          </SearchButton>
+        </ButtonContainer>
+        <RecipeWrapper>
+          {searchedRecipes.length > 0 && searchedRecipes.map((recipe) => (
+              <RecipeCard key={recipe.id}>
+                <RecipeTitle>{recipe.title}</RecipeTitle>
+                <RecipeImage src={recipe.image} alt={recipe.title} />
+                <RecipeIngredients>
+                  <h3>Ingredients:</h3>
+                  <ul>
+                    {recipe.ingredients.map((ingredient) => (
+                        <li key={ingredient.id}>
+                          {ingredient.amount} {ingredient.unit} of {ingredient.name}
+                        </li>
+                    ))}
+                  </ul>
+                </RecipeIngredients>
+                <RecipeInstructions>
+                  <h3>Instructions:</h3>
+                  <p>{recipe.instructions}</p>
+                </RecipeInstructions>
+                <RecipeTotalTime>
+                  <h3>Total Time:</h3>
+                  <p>{recipe.totalTime}</p>
+                </RecipeTotalTime>
+              </RecipeCard>
+          ))}
+        </RecipeWrapper>
+      </PageWrapper>
   );
 }
 
@@ -159,9 +165,9 @@ const ContentWrapper = styled.div`
 `;
 
 const Category = styled.div`
-  flex: 1 1 20%;
-  margin: 5px;
-  padding: 10px;
+  flex: 0 0 auto;
+  width: 350px;
+  margin: 20px;
   background-color: #fff;
   box-sizing: border-box;
 
@@ -175,11 +181,11 @@ const Category = styled.div`
   }
 
   @media (max-width: 1200px) {
-    flex: 1 1 45%;
+    width: calc(50% - 10px);
   }
 
   @media (max-width: 768px) {
-    flex: 1 1 100%;
+    width: calc(100% - 10px);
   }
 `;
 
@@ -196,7 +202,7 @@ const CategoryTitle = styled.h2`
   margin-bottom: 30px;
   background-color: #fff;
   border: 1px solid rgba(0, 0, 0, 0.11);
-  box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.1);
   padding: 20px;
   text-align: center;
 `;
@@ -243,33 +249,64 @@ const SearchButton = styled.button`
   font-size: 18px;
   border: none;
   border-radius: 100px;
-  box-shadow: 0px 4px 9px 0px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 9px 0 rgba(0, 0, 0, 0.25);
   padding: 10px 20px;
   background-color: white;
   color: black;
   cursor: pointer;
   display: block;
-  margin: 0 auto;
-  margin-top: 20px;
+  margin: 20px auto 0;
 
   &:hover {
     background-color: #f0f0f0;
   }
 `;
 
-const RecipeIngredients = styled.ul`
-  list-style-type: none;
-  padding: 0;
+const RecipeWrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 100%;
+  padding: 0 10px;
+  margin: auto;
+`;
+
+const RecipeCard = styled.div`
+  width: 300px;
+  margin: 20px;
+  background-color: #fff;
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  border-radius: 8px;
+`;
+
+const RecipeTitle = styled.h2`
+  font-size: 20px;
   margin-bottom: 20px;
 `;
 
-const RecipeInstructions = styled.p`
+const RecipeImage = styled.img`
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 20px;
+`;
+
+const RecipeIngredients = styled.div`
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+`;
+
+const RecipeInstructions = styled.div`
   font-size: 16px;
   line-height: 1.6;
   margin-bottom: 20px;
 `;
 
-const RecipeTotalTime = styled.p`
+const RecipeTotalTime = styled.div`
   font-size: 16px;
   font-weight: bold;
   margin-bottom: 20px;

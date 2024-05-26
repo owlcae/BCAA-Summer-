@@ -8,7 +8,7 @@ import RecipesComponent from './Recipes';
 import IngredientsComponent from './Ingredients';
 import RegisterComponent from './SignUp';
 import LoginComponent from './SingIn';
-import RecipePage from './RecipeTemplate'; 
+import RecipePage from './RecipePage';
 
 const GlobalStyle = createGlobalStyle`
   body, html {

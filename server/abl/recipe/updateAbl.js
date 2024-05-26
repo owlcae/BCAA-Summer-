@@ -13,11 +13,11 @@ const schema = {
       items: {
         type: "object",
         properties: {
-          ingredientId: { type: "string" },
-          quantity: { type: "number", minimum: 0.1 }, 
+          id: { type: "string" },
+          group: { type: "string" },
           unit: { type: "string" }
         },
-        required: ["ingredientId", "quantity", "unit"],
+        required: ["id", "group", "unit"],
         additionalProperties: false
       }
     },

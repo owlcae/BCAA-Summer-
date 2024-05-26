@@ -21,7 +21,7 @@ function RecipesComponent() {
         console.error('Error fetching recipes:', error);
       }
     }
-    fetchRecipes();
+    fetchRecipes().then(r => {});
   }, []);
 
   return (
@@ -89,7 +89,6 @@ const Heading = styled.h1`
   color: #000;
   margin-bottom: 60px;
   margin-top: 60px;
-  text-align: center;
 
   @media (max-width: 991px) {
     margin-bottom: 40px;
@@ -139,7 +138,12 @@ export const RecipeCard = styled.article`
   box-shadow: 0px 4px 9px 0px rgba(0, 0, 0, 0.25);
   padding: 29px;
   text-align: center;
+  height: 450px;  // Set a fixed height for the card
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 `;
+
 
 export const RecipeTitle = styled.h2`
   font: 700 20px Montserrat, sans-serif;
@@ -154,7 +158,14 @@ export const RecipeDescription = styled.p`
   margin-top: 30px;
   display: block;
   cursor: pointer;
+  height: 100px;  // Set a fixed height for the description
+  overflow: hidden;  // Hide overflow text
+  text-overflow: ellipsis;  // Add ellipsis to overflow text
+  display: -webkit-box;
+  -webkit-line-clamp: 5;  // Limit to 5 lines
+  -webkit-box-orient: vertical;
 `;
+
 
 export const RecipeImagesWrapper = styled.div`
   position: relative;

@@ -9,19 +9,44 @@ const UpdateRecipeAbl = require("../abl/recipe/updateAbl");
 const DeleteRecipeAbl = require("../abl/recipe/deleteAbl");
 const SearchByIngredientsAbl = require('../abl/recipe/searchByIngredientsAbl');
 
+router.use(express.json());
+
+router.post('/search', async (req, res) => {
+  try {
+    const { ingredientIds } = req.body;
+    console.log('Received ingredientIds:', ingredientIds); // Log the incoming data
+
+    // Validate ingredientIds
+    if (!ingredientIds || !Array.isArray(ingredientIds) || ingredientIds.length === 0) {
+      return res.status(400).json({ message: 'ingredientIds is required and should be a non-empty array' });
+    }
+    const recipes = await SearchByIngredientsAbl(ingredientIds);
+    res.status(200).json(recipes);
+  } catch (error) {
+    console.error('Error searching recipes:', error); // Improved error logging
+    res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+});
+
+
 router.get("/get/:id", async (req, res) => {
   await GetRecipeAbl(req, res);
 });
 
-router.get("/search", async (req, res) => {
-  try {
-    //const ingredientId = req.params.ingredientId;
-    const results = await SearchByIngredientsAbl(ingredientId);
-    res.json(results);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+// router.post('/search', async (req, res) => {
+//   const { ingredientIds } = req.body;
+//   try {
+//     if (!ingredientIds) {
+//       return res.status(400).json({ message: 'ingredientIds is required' });
+//     }
+//
+//     const recipes = await SearchByIngredientsAbl(ingredientIds);
+//     res.status(200).json(recipes);
+//   } catch (error) {
+//     console.error('Error searching recipes:', error);
+//     res.status(500).json({ message: 'Internal server error' });
+//   }
+// });
 
 router.get("/list", async (req, res) => {
   await ListRecipesAbl(req, res);

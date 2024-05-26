@@ -1,6 +1,6 @@
 {
   "name": "Soy sauce",
-  "quantity": 10,
+  "group": "Sauces",
   "unit": "grams",
   "id": "b7b2cc9d-0fa8-464a-a7bb-326956757901"
 }

@@ -5,6 +5,10 @@ const { log } = require("console");
 
 const recipeFolderPath = path.join(global.projectRoot, 'dao', 'storage', 'recipeList');
 
+// const projectFolderPath = path.join(__dirname, '..', '..', 'Project');
+// const recipeFolderPath = path.join(projectFolderPath, 'dao', 'storage', 'recipeList');
+
+
 function get(recipeId) {
   try {
     const filePath = path.join(recipeFolderPath, `${recipeId}.json`);

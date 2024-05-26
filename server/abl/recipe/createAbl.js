@@ -8,6 +8,10 @@ const { assignIngredientIds } = require("../../dao/ingredient-dao.js");
 
 const recipeFolderPath = path.join(global.projectRoot, 'dao', 'storage', 'recipeList');
 
+// const projectFolderPath = path.join(__dirname, '..', '..', 'Project');
+// const recipeFolderPath = path.join(projectFolderPath, 'dao', 'storage', 'recipeList');
+
+
 const schema = {
   type: "object",
   properties: {
@@ -19,16 +23,16 @@ const schema = {
         type: "object",
         properties: {
           name: { type: "string" },
-          quantity: { type: "number" },
+          group: { type: "string" },
           unit: { type: "string" }
         },
-        required: ["name", "quantity", "unit"]
+        required: ["name", "group", "unit"]
       }
     },
     instructions: { type: "string" },
     totalTime: { type: "string" },
   },
-  required: ["title", "ingredients", "instructions", "totalTime"],
+  required: ["title", "image", "ingredients", "instructions", "totalTime"],
   additionalProperties: false
 };
 
@@ -48,12 +52,16 @@ async function CreateRecipeAbl(req, res) {
     // Присвоение ID ингредиентам
     recipe.ingredients = await assignIngredientIds(recipe.ingredients);
 
+    // Генерация уникального ID для рецепта, если он отсутствует
+    if (!recipe.id) {
+      recipe.id = uuidv4(); // Assuming you have uuidv4 function to generate UUIDs
+    }
+
     // Создание рецепта
     const createdRecipe = await recipeDao.create(recipe);
 
-    // Сохранение файла под уникальным URL, базирующимся на названии рецепта
-    const titleUrl = encodeURIComponent(recipe.title.toLowerCase().replace(/\s+/g, '-'));
-    const filePath = path.join(recipeFolderPath, `${titleUrl}.json`);
+    // Сохранение файла под уникальным именем на основе ID
+    const filePath = path.join(recipeFolderPath, `${createdRecipe.id}.json`);
     fs.writeFileSync(filePath, JSON.stringify(createdRecipe, null, 2));
 
     // Ответ сервера

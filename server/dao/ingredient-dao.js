@@ -2,7 +2,11 @@ const fs = require('fs');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 
+// global.projectRoot = /path/to/your/project/root;
 const ingredientFolderPath = path.join(global.projectRoot, 'dao', 'storage', 'ingredientList');
+
+// const projectFolderPath = path.join(__dirname, '..', 'Project');
+// const ingredientFolderPath = path.join(projectFolderPath, 'server', 'dao', 'storage', 'ingredientList');
 
 function readIngredientFile(filePath) {
     if (fs.existsSync(filePath)) {
@@ -31,7 +35,7 @@ function list() {
   }
 }
 
-function createOrUpdate(ingredientData) {
+async function createOrUpdate(ingredientData) {
     let ingredient = ingredientData.id ? get(ingredientData.id) : list().find(i => i.name.toLowerCase() === ingredientData.name.toLowerCase());
 
     if (ingredient) {
@@ -68,7 +72,7 @@ async function assignIngredientIds(ingredients) {
         } else {
             const newId = uuidv4(); // Generate a new ID
             const newIngredient = { ...ingredient, id: newId };
-            createOrUpdate(newIngredient);  // Persist the new ingredient
+            await createOrUpdate(newIngredient);  // Persist the new ingredient
             return newIngredient;
         }
     }));

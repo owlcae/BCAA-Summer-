@@ -7,6 +7,9 @@ const ingredientDao = require("../../dao/ingredient-dao.js");
 
 const ingredientFolderPath = path.join(global.projectRoot, 'dao', 'storage', 'ingredientList');
 
+// const projectFolderPath = path.join(__dirname, '..', '..', 'Project');
+// const ingredientFolderPath = path.join(projectFolderPath, 'dao', 'storage', 'ingredientList');
+
 function saveIngredient(ingredient) {
   const filePath = path.join(ingredientFolderPath, `${ingredient.id}.json`);
   fs.writeFileSync(filePath, JSON.stringify(ingredient, null, 2));
@@ -25,16 +28,16 @@ const schema = {
     unit: { type: "string" },
     group: {
       type: "string",
-      enum: [
-        "Spices and Herbs",
-        "Dairy Products",
-        "Vegetables",
-        "Sweeteners",
-        "Oils and Fats",
-        "Proteins",
-        "Grains",
-        "Fruits"
-      ]
+      // enum: [
+      //   "Spices and Herbs",
+      //   "Dairy Products",
+      //   "Vegetables",
+      //   "Sweeteners",
+      //   "Oils and Fats",
+      //   "Proteins",
+      //   "Grains",
+      //   "Fruits"
+      // ]
     }
   },
   required: ["name", "unit", "group"], // Ensure 'group' is required if it should be

@@ -1,6 +1,6 @@
 {
   "name": "Bell peppers",
-  "quantity": 100,
+  "group": "Vegetables",
   "unit": "grams",
   "id": "9c377bc1-23e8-40dd-960f-1a433895db7e"
 }
